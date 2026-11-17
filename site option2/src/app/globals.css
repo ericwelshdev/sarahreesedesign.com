@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-alabaster: #f7f5f0;
+    --bg-stone: #efece6;
+    --bg-obsidian: #111110;
+    --bg-carbon: #1a1a18;
+    --text-ink: #111110;
+    --text-graphite: #6e6c67;
+    --accent-chartreuse: #d4f82a;
+    --accent-coral: #f26b4e;
+  }
+
+  body {
+    font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #f7f5f0;
+    color: #111110;
+    overflow-x: hidden;
+  }
+}
+
+.font-display {
+  font-family: var(--font-syne), var(--font-jakarta), sans-serif;
+  letter-spacing: -0.035em;
+}
+
+.font-sans {
+  font-family: var(--font-jakarta), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-mono {
+  font-family: var(--font-jetbrains), monospace;
+}
+
+.stroke-watermark {
+  -webkit-text-stroke: 1px rgba(17, 17, 16, 0.065);
+  color: transparent;
+}
+
+.writing-vertical {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* Custom subtle scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f7f5f0;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 16, 0.2);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(17, 17, 16, 0.4);
+}
