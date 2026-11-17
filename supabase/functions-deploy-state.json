@@ -1,0 +1,17 @@
+{
+  "projectId": "72984852",
+  "functions": {
+    "media": {
+      "hasChanged": false,
+      "hash": "62deaf3cef0d4ff53672f22c8b809a9094f6b918af69f17029ea493519450581"
+    },
+    "studio-api": {
+      "hasChanged": false,
+      "hash": "f2ac0da9196d0b5db90209fbd2e291f12e33e72f72d03298afc4d55b7e7b2ba9"
+    },
+    "studio-auth": {
+      "hasChanged": false,
+      "hash": "9830408b7019c9d7078e78aa0ddf30d44674ec52151e8bb26c3fc5ef9c745511"
+    }
+  }
+}

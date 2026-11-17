@@ -1,0 +1,8 @@
+[functions.studio-auth]
+verify_jwt = false
+
+[functions.studio-api]
+verify_jwt = false
+
+[functions.media]
+verify_jwt = false
