@@ -1,16 +1,16 @@
 import { useState } from "react";
 import type { Category, Project } from "../types";
 import { CATEGORY_LABEL } from "../types";
+import ProjectVisual from "./ProjectVisual";
 
 interface Props {
   projects: Project[];
   onOpen: (p: Project) => void;
-  onEdit: (p: Project) => void;
 }
 
 const FILTERS: Array<Category | "all"> = ["all", "brand", "campaign", "web"];
 
-export default function WorkArchive({ projects, onOpen, onEdit }: Props) {
+export default function WorkArchive({ projects, onOpen }: Props) {
   const [filter, setFilter] = useState<Category | "all">("all");
   const shown = projects.filter((p) => filter === "all" || p.category === filter);
 
@@ -41,37 +41,10 @@ export default function WorkArchive({ projects, onOpen, onEdit }: Props) {
         <div className="work-grid">
           {shown.map((p, i) => (
             <div key={p.id} className={`work-card${(i + 1) % 3 === 0 ? " wide" : ""}`} data-reveal>
-              <button
-                className="edit-tab"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(p);
-                }}
-                title="Edit in Studio"
-              >
-                Edit work
-              </button>
               <button className="work-cover" style={{ width: "100%" }} onClick={() => onOpen(p)}>
                 <span className="work-tag">{CATEGORY_LABEL[p.category]}</span>
                 <span className="work-num">{i + 1}</span>
-                {p.cover_image ? (
-                  <img src={p.cover_image} alt={p.title} loading="lazy" />
-                ) : (
-                  <span
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      display: "grid",
-                      placeItems: "center",
-                      fontFamily: "var(--font-display)",
-                      fontSize: 42,
-                      fontWeight: 700,
-                      color: "rgba(17,17,16,0.2)",
-                    }}
-                  >
-                    {p.client || p.title}
-                  </span>
-                )}
+                <ProjectVisual project={p} compact />
               </button>
               <div className="work-title">{p.title}</div>
               <div className="work-sub">

@@ -1,33 +1,56 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getSite, type SiteData } from "./lib/data";
 import Nav from "./components/Nav";
 import Hero from "./components/Hero";
 import WorkArchive from "./components/WorkArchive";
-import CaseStudySheet from "./components/CaseStudySheet";
 import ClientIndex from "./components/ClientIndex";
 import Dossier from "./components/Dossier";
 import Faq from "./components/Faq";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import ProjectPage from "./components/ProjectPage";
 import Studio from "./studio/StudioGate";
-import type { StudioTab } from "./studio/StudioTab";
-import type { Project } from "./types";
+
+interface Route {
+  name: "home" | "project" | "studio";
+  slug?: string;
+}
+
+function parseRoute(): Route {
+  const path = window.location.pathname.replace(/\/+$/, "");
+  if (path === "/studio") return { name: "studio" };
+  const match = path.match(/^\/work\/([^/]+)$/);
+  if (match) return { name: "project", slug: decodeURIComponent(match[1]) };
+  return { name: "home" };
+}
+
+export function navigate(to: string) {
+  window.history.pushState(null, "", to);
+  window.dispatchEvent(new PopStateEvent("popstate"));
+  window.scrollTo(0, 0);
+}
 
 export default function App() {
+  const [route, setRoute] = useState<Route>(parseRoute);
   const [site, setSite] = useState<SiteData | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Project | null>(null);
-  const [studioOpen, setStudioOpen] = useState(false);
-  const [studioTab, setStudioTab] = useState<StudioTab | undefined>(undefined);
-  const [studioProject, setStudioProject] = useState<number | null>(null);
 
-  const refresh = () => {
+  useEffect(() => {
+    const onPop = () => {
+      setRoute(parseRoute());
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, []);
+
+  const refresh = useCallback(() => {
     getSite()
       .then(setSite)
       .catch((e: Error) => setError(e.message));
-  };
+  }, []);
 
-  useEffect(refresh, []);
+  useEffect(refresh, [refresh]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -46,7 +69,11 @@ export default function App() {
       observer.disconnect();
       mo.disconnect();
     };
-  }, [site]);
+  }, [route, site]);
+
+  if (route.name === "studio") {
+    return <Studio onClose={() => navigate("/")} />;
+  }
 
   if (error) {
     return (
@@ -77,31 +104,58 @@ export default function App() {
         .join("") || "SR"
     : "SR";
 
-  const openStudio = (tab?: StudioTab, projectId?: number) => {
-    setStudioTab(tab);
-    setStudioProject(projectId ?? null);
-    setStudioOpen(true);
+  const scrollToContact = () => {
+    if (route.name !== "home") {
+      navigate("/#contact");
+      setTimeout(() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" }), 60);
+    } else {
+      document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" });
+    }
   };
+
+  if (route.name === "project") {
+    const project = projects.find((p) => p.slug === route.slug);
+    if (project) {
+      return (
+        <>
+          <Nav
+            initials={initials}
+            status={profile?.availability ?? "open"}
+            onHome={() => navigate("/")}
+            onContact={scrollToContact}
+          />
+          <main>
+            <ProjectPage
+              project={project}
+              onBack={() => navigate("/#work")}
+              onContact={scrollToContact}
+            />
+          </main>
+          <Footer profile={profile} />
+        </>
+      );
+    }
+  }
 
   return (
     <>
       <Nav
         initials={initials}
         status={profile?.availability ?? "open"}
-        onStudio={() => openStudio()}
+        onHome={() => navigate("/")}
+        onContact={scrollToContact}
       />
       <main id="top">
         {profile && (
           <Hero
             profile={profile}
-            onStartProject={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+            onStartProject={scrollToContact}
             onViewWork={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
           />
         )}
         <WorkArchive
           projects={projects}
-          onOpen={setSelected}
-          onEdit={(p) => openStudio("projects", p.id)}
+          onOpen={(p) => navigate(`/work/${encodeURIComponent(p.slug)}`)}
         />
         <section className="section" id="about">
           <div className="wrap-narrow">
@@ -120,28 +174,7 @@ export default function App() {
         <Faq faqs={faqs} />
         <Contact profile={profile} onSaved={refresh} />
       </main>
-      <Footer profile={profile} onStudio={() => openStudio()} />
-      <CaseStudySheet
-        project={selected}
-        onClose={() => setSelected(null)}
-        onEdit={(p) => {
-          setSelected(null);
-          openStudio("projects", p.id);
-        }}
-      />
-      {studioOpen && (
-        <Studio
-          initialTab={studioTab}
-          initialProjectId={studioProject}
-          onClose={() => {
-            setStudioOpen(false);
-            setStudioTab(undefined);
-            setStudioProject(null);
-            refresh();
-          }}
-          profile={profile}
-        />
-      )}
+      <Footer profile={profile} />
     </>
   );
 }

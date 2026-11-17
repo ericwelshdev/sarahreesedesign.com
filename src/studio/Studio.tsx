@@ -23,20 +23,8 @@ export default function Studio({ onClose, onSignOut }: Props) {
   const [tab, setTab] = useState<(typeof TABS)[number]["key"]>("content");
   const [contentTab, setContentTab] = useState<(typeof CONTENT_KEYS)[number]>("projects");
 
-  useEffect(() => {
-    document.body.style.overflow = "hidden";
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = "";
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [onClose]);
-
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 100, background: "var(--bg)", overflowY: "auto" }}>
+    <div style={{ minHeight: "100vh", background: "var(--bg)", overflowY: "auto" }}>
       <header
         style={{
           position: "sticky",
@@ -62,7 +50,7 @@ export default function Studio({ onClose, onSignOut }: Props) {
           <p className="font-display" style={{ fontWeight: 700, fontSize: 17, letterSpacing: "-0.02em" }}>
             Studio
           </p>
-          <p style={{ fontSize: 12, opacity: 0.6 }}>Content manager — changes publish instantly</p>
+          <p style={{ fontSize: 12, opacity: 0.6 }}>Private content manager — changes publish instantly</p>
         </div>
         {TABS.map((t) => (
           <button

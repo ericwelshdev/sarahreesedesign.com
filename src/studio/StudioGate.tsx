@@ -1,35 +1,22 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import StudioInner from "./Studio";
 import { doLogin, loadSession } from "./shared";
 
-import type { StudioTab } from "./StudioTab";
-
-export type { StudioTab };
-
 interface Props {
-  initialTab?: "projects" | "inquiries" | "media" | "profile";
-  initialProjectId?: number | null;
   onClose: () => void;
-  profile: unknown;
 }
 
-export default function Studio(props: Props) {
+export default function Studio({ onClose }: Props) {
   const [authed, setAuthed] = useState<boolean>(() => loadSession() !== null);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    if (!authed) setPassword("");
-  }, [authed]);
-
   if (!authed) {
     return (
       <div
         style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 100,
+          minHeight: "100vh",
           background: "var(--obsidian)",
           display: "grid",
           placeItems: "center",
@@ -53,12 +40,12 @@ export default function Studio(props: Props) {
             }
           }}
         >
-          <p className="eyebrow" style={{ marginBottom: 10 }}>Director Studio</p>
+          <p className="eyebrow" style={{ marginBottom: 10 }}>Director Studio — private workspace</p>
           <h1 className="font-display" style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: 6 }}>
             Sign in
           </h1>
           <p style={{ fontSize: 14, color: "var(--graphite)", marginBottom: 20 }}>
-            Enter the studio password to manage site content.
+            This is the content-management area — visitors never see this page. Enter the studio password to manage site content.
           </p>
           <input
             className="st-input"
@@ -75,7 +62,7 @@ export default function Studio(props: Props) {
             <button className="st-btn st-btn-primary" disabled={busy || !password}>
               {busy ? "Checking…" : "Enter Studio"}
             </button>
-            <button type="button" className="st-btn st-btn-ghost" onClick={props.onClose}>
+            <button type="button" className="st-btn st-btn-ghost" onClick={onClose}>
               Back to site
             </button>
           </div>
@@ -86,7 +73,7 @@ export default function Studio(props: Props) {
 
   return (
     <StudioInner
-      onClose={props.onClose}
+      onClose={onClose}
       onSignOut={() => {
         import("./shared").then((m) => m.clearSession());
         setAuthed(false);

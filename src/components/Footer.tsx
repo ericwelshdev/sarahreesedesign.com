@@ -1,6 +1,6 @@
 import type { Profile } from "../types";
 
-export default function Footer({ profile, onStudio }: { profile: Profile | null; onStudio: () => void }) {
+export default function Footer({ profile }: { profile: Profile | null }) {
   return (
     <footer className="dark-band" style={{ paddingBlock: "64px 40px" }}>
       <div className="wrap">
@@ -22,13 +22,9 @@ export default function Footer({ profile, onStudio }: { profile: Profile | null;
                 Instagram
               </a>
             )}
-            <button
-              onClick={onStudio}
-              style={{ color: "inherit", opacity: 0.35, background: "none", border: 0, cursor: "pointer", fontSize: 14 }}
-              rel="nofollow"
-            >
-              Studio
-            </button>
+            <a href="/studio" style={{ color: "inherit", opacity: 0.45, fontSize: 14 }} rel="nofollow">
+              Studio login
+            </a>
           </div>
         </div>
       </div>

@@ -11,10 +11,12 @@ const ITEMS = [
 interface Props {
   initials: string;
   status: "open" | "limited" | "booked";
-  onStudio: () => void;
+  onHome?: () => void;
+  onContact?: () => void;
+  showSections?: boolean;
 }
 
-export default function Nav({ initials, status, onStudio }: Props) {
+export default function Nav({ initials, status, onHome, onContact, showSections = true }: Props) {
   const [active, setActive] = useState("top");
   const containerRef = useRef<HTMLDivElement>(null);
   const [pill, setPill] = useState({ x: 0, w: 0, ready: false });
@@ -61,29 +63,30 @@ export default function Nav({ initials, status, onStudio }: Props) {
           style={{ transform: `translateX(${pill.x}px)`, width: pill.w }}
         />
       )}
-      <span className="nav-logo" aria-hidden>
-        {initials}
-      </span>
-      {ITEMS.map((item) => (
-        <button
-          key={item.id}
-          ref={(el) => {
-            itemRefs.current[item.id] = el;
-          }}
-          className={`nav-item${active === item.id ? " active" : ""}`}
-          onClick={() => jump(item.id)}
-        >
-          {item.label}
-        </button>
-      ))}
       <button
-        className="nav-item"
-        style={{ display: "none" }}
-        onClick={onStudio}
-        aria-hidden
-        tabIndex={-1}
-      />
-      <button className="nav-cta" onClick={() => jump("contact")}>
+        className="nav-logo"
+        aria-label="Back to home"
+        onClick={() => (onHome ? onHome() : window.scrollTo({ top: 0, behavior: "smooth" }))}
+      >
+        {initials}
+      </button>
+      {showSections &&
+        ITEMS.map((item) => (
+          <button
+            key={item.id}
+            ref={(el) => {
+              itemRefs.current[item.id] = el;
+            }}
+            className={`nav-item${active === item.id ? " active" : ""}`}
+            onClick={() => jump(item.id)}
+          >
+            {item.label}
+          </button>
+        ))}
+      <button
+        className="nav-cta"
+        onClick={() => (onContact ? onContact() : jump("contact"))}
+      >
         <span className="dot" data-s={status} />
         Start a project
       </button>
