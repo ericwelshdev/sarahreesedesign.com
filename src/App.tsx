@@ -120,9 +120,11 @@ export default function App() {
         <>
           <Nav
             initials={initials}
+            name={profile?.name ?? ""}
             status={profile?.availability ?? "open"}
             onHome={() => navigate("/")}
             onContact={scrollToContact}
+            showSections={false}
           />
           <main>
             <ProjectPage
@@ -141,6 +143,7 @@ export default function App() {
     <>
       <Nav
         initials={initials}
+        name={profile?.name ?? ""}
         status={profile?.availability ?? "open"}
         onHome={() => navigate("/")}
         onContact={scrollToContact}

@@ -10,17 +10,19 @@ const ITEMS = [
 
 interface Props {
   initials: string;
+  name: string;
   status: "open" | "limited" | "booked";
   onHome?: () => void;
   onContact?: () => void;
   showSections?: boolean;
 }
 
-export default function Nav({ initials, status, onHome, onContact, showSections = true }: Props) {
+export default function Nav({ initials, name, status, onHome, onContact, showSections = true }: Props) {
   const [active, setActive] = useState("top");
   const containerRef = useRef<HTMLDivElement>(null);
   const [pill, setPill] = useState({ x: 0, w: 0, ready: false });
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const [scrolled, setScrolled] = useState(false);
 
   useLayoutEffect(() => {
     const el = itemRefs.current[active];
@@ -29,10 +31,12 @@ export default function Nav({ initials, status, onHome, onContact, showSections 
       const er = el.getBoundingClientRect();
       setPill({ x: er.left - cr.left, w: er.width, ready: true });
     }
-  }, [active]);
+  }, [active, showSections]);
 
   useEffect(() => {
     const onScroll = () => {
+      setScrolled(window.scrollY > 10);
+      if (!showSections) return;
       for (const item of [...ITEMS].reverse()) {
         const section = document.getElementById(item.id);
         if (section) {
@@ -48,7 +52,7 @@ export default function Nav({ initials, status, onHome, onContact, showSections 
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [showSections]);
 
   const jump = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
@@ -56,40 +60,41 @@ export default function Nav({ initials, status, onHome, onContact, showSections 
   };
 
   return (
-    <div className="nav-island" ref={containerRef} role="navigation" aria-label="Main">
-      {pill.ready && (
-        <span
-          className="nav-pill"
-          style={{ transform: `translateX(${pill.x}px)`, width: pill.w }}
-        />
-      )}
-      <button
-        className="nav-logo"
-        aria-label="Back to home"
-        onClick={() => (onHome ? onHome() : window.scrollTo({ top: 0, behavior: "smooth" }))}
-      >
-        {initials}
-      </button>
-      {showSections &&
-        ITEMS.map((item) => (
-          <button
-            key={item.id}
-            ref={(el) => {
-              itemRefs.current[item.id] = el;
-            }}
-            className={`nav-item${active === item.id ? " active" : ""}`}
-            onClick={() => jump(item.id)}
-          >
-            {item.label}
-          </button>
-        ))}
-      <button
-        className="nav-cta"
-        onClick={() => (onContact ? onContact() : jump("contact"))}
-      >
-        <span className="dot" data-s={status} />
-        Start a project
-      </button>
-    </div>
+    <header className={`site-header${scrolled ? " scrolled" : ""}`}>
+      <div className="site-header-inner">
+        <button className="nav-logo" aria-label="Back to home" onClick={() => (onHome ? onHome() : window.scrollTo({ top: 0, behavior: "smooth" }))}>
+          {initials}
+        </button>
+        <button className="site-name" onClick={() => (onHome ? onHome() : window.scrollTo({ top: 0, behavior: "smooth" }))}>
+          {name}
+        </button>
+        {showSections && (
+          <nav className="nav-island" ref={containerRef} aria-label="Sections">
+            {pill.ready && (
+              <span
+                className="nav-pill"
+                style={{ transform: `translateX(${pill.x}px)`, width: pill.w }}
+              />
+            )}
+            {ITEMS.map((item) => (
+              <button
+                key={item.id}
+                ref={(el) => {
+                  itemRefs.current[item.id] = el;
+                }}
+                className={`nav-item${active === item.id ? " active" : ""}`}
+                onClick={() => jump(item.id)}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
+        )}
+        <button className="nav-cta" onClick={() => (onContact ? onContact() : jump("contact"))}>
+          <span className="dot" data-s={status} />
+          Start a project
+        </button>
+      </div>
+    </header>
   );
 }

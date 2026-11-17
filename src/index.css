@@ -203,14 +203,52 @@ body {
 
 /* ---------- nav ---------- */
 
-.nav-island {
+.site-header {
   position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 60;
+  background: rgba(247, 245, 240, 0.85);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-bottom: 1px solid transparent;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+.site-header.scrolled {
+  background: rgba(247, 245, 240, 0.94);
+  border-bottom-color: var(--hair);
+  box-shadow: 0 8px 30px rgba(17, 17, 16, 0.06);
+}
+
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px clamp(18px, 4vw, 44px);
+}
+
+.site-name {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+  margin-right: 8px;
+}
+
+.nav-island {
   display: flex;
   align-items: center;
   gap: 2px;
+  position: relative;
+  margin-inline: auto;
   background: rgba(17, 17, 16, 0.82);
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
@@ -220,15 +258,13 @@ body {
   box-shadow: 0 12px 40px rgba(17, 17, 16, 0.28);
 }
 
-@media (max-width: 819px) {
+@media (max-width: 979px) {
   .nav-island {
-    bottom: 14px;
+    display: none;
   }
-}
 
-@media (min-width: 820px) {
-  .nav-island {
-    top: 18px;
+  .site-name {
+    margin-right: auto;
   }
 }
 
