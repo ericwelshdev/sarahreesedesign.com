@@ -40,7 +40,7 @@ export default function WorkArchive({ projects, onOpen }: Props) {
         </div>
         <div className="work-grid">
           {shown.map((p, i) => (
-            <div key={p.id} className={`work-card${(i + 1) % 3 === 0 ? " wide" : ""}`} data-reveal>
+            <div key={p.id} className="work-card" data-reveal>
               <button className="work-cover" style={{ width: "100%" }} onClick={() => onOpen(p)}>
                 <span className="work-tag">{CATEGORY_LABEL[p.category]}</span>
                 <span className="work-num">{i + 1}</span>

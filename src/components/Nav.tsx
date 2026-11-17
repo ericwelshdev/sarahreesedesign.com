@@ -65,8 +65,16 @@ export default function Nav({ initials, name, status, onHome, onContact, showSec
         <button className="nav-logo" aria-label="Back to home" onClick={() => (onHome ? onHome() : window.scrollTo({ top: 0, behavior: "smooth" }))}>
           {initials}
         </button>
-        <button className="site-name" onClick={() => (onHome ? onHome() : window.scrollTo({ top: 0, behavior: "smooth" }))}>
-          {name}
+        <button
+          className="site-name"
+          aria-label={`${name}, independent creative director`}
+          onClick={() => (onHome ? onHome() : window.scrollTo({ top: 0, behavior: "smooth" }))}
+        >
+          <span className="site-name-main">
+            <span>{name.split(" ")[0]}</span>
+            <em>{name.split(" ").slice(1).join(" ")}</em>
+          </span>
+          <span className="site-name-role">Independent creative director</span>
         </button>
         {showSections && (
           <nav className="nav-island" ref={containerRef} aria-label="Sections">
